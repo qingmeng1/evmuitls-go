@@ -121,7 +121,7 @@ func BatchTokenFillBalance(nodeURL, tokenAddress string, keys, proxys []string, 
 			toPrivateKey := mustParsePrivateKey(keys[i])
 			toAddress := getAddressFromPrivateKey(toPrivateKey)
 
-			erc20, err := contracts.NewIERC20(common.HexToAddress(tokenAddress), client)
+			erc20, err := contracts.NewERC20(common.HexToAddress(tokenAddress), client)
 			if err != nil {
 				log.Fatalf("Failed to connect ERC20 contract: %v", err)
 			}
@@ -193,7 +193,7 @@ func BatchTokenTransfer(nodeURL, tokenAddress string, keys, proxys []string, amo
 			toPrivateKey := mustParsePrivateKey(keys[i])
 			toAddress := getAddressFromPrivateKey(toPrivateKey)
 
-			erc20, err := contracts.NewIERC20(common.HexToAddress(tokenAddress), client)
+			erc20, err := contracts.NewERC20(common.HexToAddress(tokenAddress), client)
 			if err != nil {
 				log.Fatalf("Failed to connect ERC20 contract: %v", err)
 			}
