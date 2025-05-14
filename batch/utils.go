@@ -90,69 +90,19 @@ func mustGetBalance(client *ethclient.Client, address common.Address) *big.Int {
 	return balanceWei
 }
 
-func batchSendTransfer(client *ethclient.Client, privateKeyHex string, toAddress common.Address, amount *big.Int) (*common.Hash, error) {
+func sendTransfer(client *ethclient.Client, privateKeyHex string, toAddress common.Address, amount *big.Int, useGlobalNonce bool) (*common.Hash, error) {
 	privateKey := mustParsePrivateKey(privateKeyHex)
 	fromAddress := getAddressFromPrivateKey(privateKey)
 
-	nonceMutex.Lock()
-	nonce := currentNonce
-	currentNonce++
-	nonceMutex.Unlock()
-
-	gasPrice, err := client.SuggestGasPrice(context.Background())
-	if err != nil {
-		return nil, fmt.Errorf("failed to suggest gas price: %v", err)
+	var nonce uint64
+	if useGlobalNonce {
+		nonceMutex.Lock()
+		nonce = currentNonce
+		currentNonce++
+		nonceMutex.Unlock()
+	} else {
+		nonce = mustGetNonce(client, fromAddress)
 	}
-
-	chainID, err := client.NetworkID(context.Background())
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := hex.DecodeString("")
-	if err != nil {
-		return nil, fmt.Errorf("failed to decode method ID: %v", err)
-	}
-
-	msg := ethereum.CallMsg{
-		From:  fromAddress,
-		To:    &toAddress,
-		Value: amount,
-		Data:  data,
-	}
-	gasLimit, err := client.EstimateGas(context.Background(), msg)
-	if err != nil {
-		return nil, err
-	}
-
-	tx := types.NewTx(&types.DynamicFeeTx{
-		ChainID:   chainID,
-		Nonce:     nonce,
-		GasFeeCap: gasPrice,
-		Gas:       gasLimit,
-		To:        &toAddress,
-		Value:     amount,
-		Data:      data,
-	})
-
-	signedTx, err := types.SignTx(tx, types.LatestSignerForChainID(chainID), privateKey)
-	if err != nil {
-		return nil, fmt.Errorf("failed to sign transaction: %v", err)
-	}
-
-	if err := client.SendTransaction(context.Background(), signedTx); err != nil {
-		return nil, fmt.Errorf("failed to send transaction: %v", err)
-	}
-
-	hash := signedTx.Hash()
-	return &hash, nil
-}
-
-func sendTransfer(client *ethclient.Client, privateKeyHex string, toAddress common.Address, amount *big.Int) (*common.Hash, error) {
-	privateKey := mustParsePrivateKey(privateKeyHex)
-	fromAddress := getAddressFromPrivateKey(privateKey)
-
-	nonce := mustGetNonce(client, fromAddress)
 
 	gasPrice, err := client.SuggestGasPrice(context.Background())
 	if err != nil {

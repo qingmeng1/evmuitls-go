@@ -46,7 +46,7 @@ func CollectEth(nodeURL string, keys, proxys []string) {
 			log.Printf("[%d] To: %s\n", i, toAddress)
 
 			for t := 0; t < 1; t++ {
-				hash, err := sendTransfer(client, keys[i], toAddress, new(big.Int).Sub(balance, new(big.Int).Mul(gasPrice, big.NewInt(21000))))
+				hash, err := sendTransfer(client, keys[i], toAddress, new(big.Int).Sub(balance, new(big.Int).Mul(gasPrice, big.NewInt(21000))), false)
 				if err != nil {
 					log.Println("Failed to send transfer:", err)
 					t--
