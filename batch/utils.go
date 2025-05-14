@@ -246,7 +246,7 @@ func BatchCall(nodeURL, tokenAddress, dataStr string, amount *big.Int, keys, pro
 			toAddress := common.HexToAddress(tokenAddress)
 
 			log.Printf("[%d] From:	%s\n", i, fromAddress)
-			log.Printf("[%d] To:		%s\n", i, toAddress)
+			log.Printf("[%d] To:	%s\n", i, toAddress)
 
 			nonce := mustGetNonce(client, fromAddress)
 
@@ -299,7 +299,7 @@ func BatchCall(nodeURL, tokenAddress, dataStr string, amount *big.Int, keys, pro
 					t--
 					continue
 				}
-				log.Printf("[%d/%d] Tx: %s\n", i, t, signedTx.Hash())
+				log.Printf("[%d/%d] Tx:	%s\n", i, t, signedTx.Hash())
 			}
 		}(i)
 	}
