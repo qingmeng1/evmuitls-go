@@ -211,7 +211,7 @@ func getAddressFromPrivateKey(privateKey *ecdsa.PrivateKey) common.Address {
 }
 
 func BatchCall(nodeURL, tokenAddress, dataStr string, amount *big.Int, keys, proxys []string) {
-	strings.Replace(dataStr, "0x", "", 1)
+	dataStr = strings.Replace(dataStr, "0x", "", 1)
 	clients := mustCreateClients(nodeURL, proxys)
 
 	chainID, err := clients[0].NetworkID(context.Background())
@@ -256,8 +256,6 @@ func BatchCall(nodeURL, tokenAddress, dataStr string, amount *big.Int, keys, pro
 					t--
 					continue
 				}
-
-				log.Println(hex.EncodeToString(data))
 
 				msg := ethereum.CallMsg{
 					From:  fromAddress,
