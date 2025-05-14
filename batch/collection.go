@@ -2,9 +2,9 @@ package batch
 
 import (
 	"context"
-	"evmutils-go/contracts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/qingmeng1/evmuitls-go/contracts"
 	"log"
 	"math/big"
 	"sync"
