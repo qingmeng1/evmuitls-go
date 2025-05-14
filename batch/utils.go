@@ -245,14 +245,14 @@ func BatchCall(nodeURL, tokenAddress, dataStr string, amount *big.Int, keys, pro
 			for t := 0; t < 1; t++ {
 				gasPrice, err := client.SuggestGasPrice(context.Background())
 				if err != nil {
-					log.Println("failed to suggest gas price: %v", err)
+					log.Printf("failed to suggest gas price: %v\n", err)
 					t--
 					continue
 				}
 
 				data, err := hex.DecodeString(strings.Replace(dataStr, "{from}", strings.Replace(fromAddress.String(), "0x", "", 1), 1))
 				if err != nil {
-					log.Println("failed to decode method ID: %v", err)
+					log.Printf("failed to decode method ID: %v\n", err)
 					t--
 					continue
 				}
@@ -265,7 +265,7 @@ func BatchCall(nodeURL, tokenAddress, dataStr string, amount *big.Int, keys, pro
 				}
 				gasLimit, err := client.EstimateGas(context.Background(), msg)
 				if err != nil {
-					log.Println("failed to suggest gas limit: %v", err)
+					log.Printf("failed to suggest gas limit: %v\n", err)
 					t--
 					continue
 				}
@@ -282,19 +282,19 @@ func BatchCall(nodeURL, tokenAddress, dataStr string, amount *big.Int, keys, pro
 
 				signedTx, err := types.SignTx(tx, types.LatestSignerForChainID(chainID), fromPrivateKey)
 				if err != nil {
-					log.Println("failed to sign transaction: %v", err)
+					log.Printf("failed to sign transaction: %v\n", err)
 					t--
 					continue
 				}
 
 				if err := client.SendTransaction(context.Background(), signedTx); err != nil {
-					log.Println("failed to send transaction: %v", err)
+					log.Printf("failed to send transaction: %v\n", err)
 					t--
 					continue
 				}
 
 				if err != nil {
-					log.Println("Failed to send transfer:", err)
+					log.Printf("Failed to send transfer: %v\n", err)
 					t--
 					continue
 				}
