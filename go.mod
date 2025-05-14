@@ -1,4 +1,4 @@
-module evmutils-go
+module github.com/qingmeng1/evmuitls-go
 
 go 1.24.0
 
