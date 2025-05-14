@@ -74,8 +74,10 @@ func mustParsePrivateKey(key string) *ecdsa.PrivateKey {
 
 func mustGetNonce(client *ethclient.Client, address common.Address) uint64 {
 	nonce, err := client.PendingNonceAt(context.Background(), address)
-	if err != nil {
-		log.Fatalf("Failed to get initial nonce: %v", err)
+	for err != nil {
+		log.Printf("Failed to get initial nonce: %v", err)
+		time.Sleep(3 * time.Second)
+		nonce, err = client.PendingNonceAt(context.Background(), address)
 	}
 	return nonce
 }
@@ -220,6 +222,12 @@ func BatchCall(nodeURL, tokenAddress, dataStr string, amount *big.Int, keys, pro
 		return
 	}
 
+	gasPrice, err := clients[0].SuggestGasPrice(context.Background())
+	if err != nil {
+		log.Printf("failed to suggest gas price: %v\n", err)
+		return
+	}
+
 	concurrency := len(proxys)
 	semaphore := make(chan struct{}, concurrency)
 	var wg sync.WaitGroup
@@ -243,13 +251,6 @@ func BatchCall(nodeURL, tokenAddress, dataStr string, amount *big.Int, keys, pro
 			nonce := mustGetNonce(client, fromAddress)
 
 			for t := 0; t < 1; t++ {
-				gasPrice, err := client.SuggestGasPrice(context.Background())
-				if err != nil {
-					log.Printf("failed to suggest gas price: %v\n", err)
-					t--
-					continue
-				}
-
 				data, err := hex.DecodeString(strings.Replace(dataStr, "{from}", strings.Replace(fromAddress.String(), "0x", "", 1), 1))
 				if err != nil {
 					log.Printf("failed to decode method ID: %v\n", err)
