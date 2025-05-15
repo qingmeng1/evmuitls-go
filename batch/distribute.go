@@ -138,12 +138,12 @@ func BatchTokenFillBalance(nodeURL, tokenAddress string, keys, proxys []string, 
 			log.Printf("[%d] From: %s\n", i, fromAddress)
 			log.Printf("[%d] To: %s\n", i, toAddress)
 
-			for t := 0; t < 1; t++ {
-				nonceMutex.Lock()
-				nonce := currentNonce
-				currentNonce++
-				nonceMutex.Unlock()
+			nonceMutex.Lock()
+			nonce := currentNonce
+			currentNonce++
+			nonceMutex.Unlock()
 
+			for t := 0; t < 1; t++ {
 				auth, err := bind.NewKeyedTransactorWithChainID(fromPrivateKey, chainID)
 				if err != nil {
 					log.Printf("无法创建 transactor: %v", err)
@@ -201,12 +201,12 @@ func BatchTokenTransfer(nodeURL, tokenAddress string, keys, proxys []string, amo
 			log.Printf("[%d] From: %s\n", i, fromAddress)
 			log.Printf("[%d] To: %s\n", i, toAddress)
 
-			for t := 0; t < 1; t++ {
-				nonceMutex.Lock()
-				nonce := currentNonce
-				currentNonce++
-				nonceMutex.Unlock()
+			nonceMutex.Lock()
+			nonce := currentNonce
+			currentNonce++
+			nonceMutex.Unlock()
 
+			for t := 0; t < 1; t++ {
 				auth, err := bind.NewKeyedTransactorWithChainID(fromPrivateKey, chainID)
 				if err != nil {
 					log.Printf("无法创建 transactor: %v", err)
