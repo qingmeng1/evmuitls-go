@@ -37,7 +37,7 @@ func CollectEth(nodeURL string, keys, proxys []string) {
 			}
 
 			balance := mustGetBalance(client, fromAddress)
-			if balance.Cmp(big.NewInt(0)) <= 0 {
+			if balance.Cmp(new(big.Int).Mul(gasPrice, big.NewInt(21000))) <= 0 {
 				log.Printf("[%d] [%s] Balance: %s\n", i, fromAddress, balance)
 				return
 			}
