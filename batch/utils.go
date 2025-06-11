@@ -163,7 +163,7 @@ func getAddressFromPrivateKey(privateKey *ecdsa.PrivateKey) common.Address {
 }
 
 func BatchCall(nodeURL, tokenAddress, dataStr string, amount *big.Int, keys, proxys []string) {
-	dataStr = strings.Replace(dataStr, "0x", "", 1)
+	dataStr = strings.Replace(dataStr, "0x", "", -1)
 	clients := mustCreateClients(nodeURL, proxys)
 
 	chainID, err := clients[0].NetworkID(context.Background())
@@ -201,7 +201,7 @@ func BatchCall(nodeURL, tokenAddress, dataStr string, amount *big.Int, keys, pro
 			nonce := mustGetNonce(client, fromAddress)
 
 			for t := 0; t < 1; t++ {
-				data, err := hex.DecodeString(strings.Replace(dataStr, "{from}", strings.Replace(fromAddress.String(), "0x", "", 1), 1))
+				data, err := hex.DecodeString(strings.Replace(dataStr, "{from}", strings.Replace(fromAddress.String(), "0x", "", -1), -1))
 				if err != nil {
 					log.Printf("failed to decode method ID: %v\n", err)
 					t--
