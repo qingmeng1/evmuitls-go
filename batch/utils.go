@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -255,3 +256,52 @@ func BatchCall(nodeURL, tokenAddress, dataStr string, amount *big.Int, keys, pro
 	}
 	wg.Wait()
 }
+
+
+func parseMethodSignature(signature string) (abi.Arguments, error) {
+	openParen := strings.Index(signature, "(")
+	closeParen := strings.Index(signature, ")")
+	if openParen == -1 || closeParen == -1 || openParen >= closeParen {
+		return nil, fmt.Errorf("invalid method signature format: %s", signature)
+	}
+	argsString := signature[openParen+1 : closeParen]
+	var args abi.Arguments
+	if argsString == "" {
+		return args, nil
+	}
+	argTypes := strings.Split(argsString, ",")
+	for _, argTypeStr := range argTypes {
+		argTypeStr = strings.TrimSpace(argTypeStr)
+		parsedType, err := abi.NewType(argTypeStr, "", nil)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse argument type '%s': %w", argTypeStr, err)
+		}
+		arg := abi.Argument{
+			Type: parsedType,
+			Name: "",
+		}
+		args = append(args, arg)
+	}
+	return args, nil
+}
+
+func MethodPack(method string, params ...any) string {
+	/*
+	   method := "withdrawNFT(address,uint256)"
+	   contractAddress := common.HexToAddress("0x290xxxxx")
+	   tokenId := big.NewInt(123)
+	   MethodPack(method, contractAddress, tokenId)
+	*/
+	methodID := crypto.Keccak256([]byte(method))[:4]
+	arguments, err := parseMethodSignature(method)
+	if err != nil {
+		log.Fatalf("Failed to parse method signature: %v", err)
+	}
+	packedArgs, err := arguments.Pack(params...)
+	if err != nil {
+		log.Fatalf("Failed to pack arguments: %v", err)
+	}
+	callData := append(methodID, packedArgs...)
+	return fmt.Sprintf("0x%x", callData)
+}
+
