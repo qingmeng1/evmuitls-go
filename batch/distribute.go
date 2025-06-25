@@ -41,7 +41,7 @@ func BatchFillBalance(nodeURL string, keys, proxys []string, fillBalance *big.In
 			log.Printf("[%d] To: %s\n", i, toAddress)
 
 			for t := 0; t < 1; t++ {
-				hash, err := sendTransfer(clients[i%concurrency], keys[0], toAddress, new(big.Int).Sub(fillBalance, balance), true)
+				hash, err := SendTransfer(clients[i%concurrency], keys[0], toAddress, new(big.Int).Sub(fillBalance, balance), "", true)
 				if err != nil {
 					log.Println("Failed to send transfer:", err)
 					t--
@@ -80,7 +80,7 @@ func BatchTransfer(nodeURL string, keys, proxys []string, amount *big.Int) {
 			log.Printf("[%d] To: %s\n", i, toAddress)
 
 			for t := 0; t < 1; t++ {
-				hash, err := sendTransfer(client, keys[0], toAddress, amount, true)
+				hash, err := SendTransfer(client, keys[0], toAddress, amount, "", true)
 				if err != nil {
 					log.Println("Failed to send transfer:", err)
 					t--
