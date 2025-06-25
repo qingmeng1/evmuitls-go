@@ -91,7 +91,7 @@ func mustGetBalance(client *ethclient.Client, address common.Address) *big.Int {
 	return balanceWei
 }
 
-func SendTransfer(client *ethclient.Client, privateKeyHex string, toAddress common.Address, amount *big.Int, useGlobalNonce bool) (*common.Hash, error) {
+func SendTransfer(client *ethclient.Client, privateKeyHex string, toAddress common.Address, amount *big.Int, dataStr string, useGlobalNonce bool) (*common.Hash, error) {
 	privateKey := mustParsePrivateKey(privateKeyHex)
 	fromAddress := getAddressFromPrivateKey(privateKey)
 
@@ -115,7 +115,7 @@ func SendTransfer(client *ethclient.Client, privateKeyHex string, toAddress comm
 		return nil, err
 	}
 
-	data, err := hex.DecodeString("")
+	data, err := hex.DecodeString(dataStr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode method ID: %v", err)
 	}
@@ -257,7 +257,6 @@ func BatchCall(nodeURL, tokenAddress, dataStr string, amount *big.Int, keys, pro
 	wg.Wait()
 }
 
-
 func parseMethodSignature(signature string) (abi.Arguments, error) {
 	openParen := strings.Index(signature, "(")
 	closeParen := strings.Index(signature, ")")
@@ -304,4 +303,3 @@ func MethodPack(method string, params ...any) string {
 	callData := append(methodID, packedArgs...)
 	return fmt.Sprintf("0x%x", callData)
 }
-
