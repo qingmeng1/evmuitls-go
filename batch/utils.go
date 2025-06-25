@@ -90,7 +90,7 @@ func mustGetBalance(client *ethclient.Client, address common.Address) *big.Int {
 	return balanceWei
 }
 
-func sendTransfer(client *ethclient.Client, privateKeyHex string, toAddress common.Address, amount *big.Int, useGlobalNonce bool) (*common.Hash, error) {
+func SendTransfer(client *ethclient.Client, privateKeyHex string, toAddress common.Address, amount *big.Int, useGlobalNonce bool) (*common.Hash, error) {
 	privateKey := mustParsePrivateKey(privateKeyHex)
 	fromAddress := getAddressFromPrivateKey(privateKey)
 
